@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
   Upload, Image as ImageIcon, Loader2, FileJson, 
-  Download, Brain, CheckCircle2, AlertCircle, 
-  ChevronRight, MousePointer2, Layout, Sparkles,
-  Crosshair, Package, BookOpen, MoreVertical, 
-  Edit, Save, X, Crop, Settings, Key
+  Brain, MousePointer2, Layout, Sparkles,
+  BookOpen, MoreVertical, 
+  Save, X, Crop
 } from 'lucide-react';
 
 // --- 型定義 ---
@@ -53,7 +52,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
   const fileInputRef = useRef<HTMLInputElement>(null);
   const jsonInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const _containerRef = useRef<HTMLDivElement>(null);
 
   // --- Initialize JSZip ---
   useEffect(() => {
@@ -81,7 +80,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
   }, []);
 
   const selectStep = useCallback(async (stepId: number) => {
-    const step = steps.find(s => s.step_id === stepId);
+    const step = steps.find((s: OperationStep) => s.step_id === stepId);
     if (!step || !videoRef.current) return;
 
     setSelectedStepId(stepId);
@@ -97,7 +96,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
       await new Promise(resolve => setTimeout(resolve, 300));
       const frame = captureFrame();
       setCurrentPreview(frame);
-      setSteps(prev => prev.map(s => s.step_id === stepId ? { ...s, previewImage: frame || undefined } : s));
+      setSteps((prev: OperationStep[]) => prev.map((s: OperationStep) => s.step_id === stepId ? { ...s, previewImage: frame || undefined } : s));
     }
   }, [steps, videoSrc, captureFrame]);
 
@@ -123,7 +122,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
   // 編集モード初期化
   useEffect(() => {
     if (isEditMode && selectedStepId && imageRef.current) {
-        const step = steps.find(s => s.step_id === selectedStepId);
+        const step = steps.find((s: OperationStep) => s.step_id === selectedStepId);
         if (step && imageRef.current) {
             const { width, height } = imageRef.current.getBoundingClientRect();
             const [ymin, xmin, ymax, xmax] = step.ui_coordinates;
@@ -288,7 +287,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
              }
         }
 
-        setSteps(prev => prev.map(s => s.step_id === selectedStepId ? {
+        setSteps((prev: OperationStep[]) => prev.map((s: OperationStep) => s.step_id === selectedStepId ? {
             ...s,
             ui_coordinates: [clamp(ymin), clamp(xmin), clamp(ymax), clamp(xmax)],
             status: 'success',
@@ -302,10 +301,10 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
 
   // --- Gemini API Logic ---
   const analyzeSingleStep = async (stepId: number) => {
-    const step = steps.find(s => s.step_id === stepId);
+    const step = steps.find((s: OperationStep) => s.step_id === stepId);
     if (!step) return;
 
-    let base64Image = step.capturedImage || step.previewImage;
+    let base64Image: string | undefined = step.capturedImage || step.previewImage;
     if (!base64Image && videoRef.current) {
       videoRef.current.currentTime = step.timestamp_seconds;
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -317,7 +316,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
       return;
     }
 
-    setSteps(prev => prev.map(s => s.step_id === stepId ? { ...s, status: 'analyzing' } : s));
+    setSteps((prev: OperationStep[]) => prev.map((s: OperationStep) => s.step_id === stepId ? { ...s, status: 'analyzing' } : s));
 
     try {
       const rawBase64 = base64Image.split(',')[1];
@@ -352,7 +351,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
 
       if (parsed.boxes && parsed.boxes.length > 0) {
         const box = parsed.boxes[0];
-        setSteps(prev => prev.map(s => s.step_id === stepId ? {
+        setSteps((prev: OperationStep[]) => prev.map((s: OperationStep) => s.step_id === stepId ? {
           ...s,
           ui_coordinates: [box.ymin, box.xmin, box.ymax, box.xmax],
           status: 'success',
@@ -364,7 +363,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
     } catch (e: any) {
       console.error(e);
       alert(`エラーが発生しました: ${e.message}`);
-      setSteps(prev => prev.map(s => s.step_id === stepId ? { ...s, status: 'error' } : s));
+      setSteps((prev: OperationStep[]) => prev.map((s: OperationStep) => s.step_id === stepId ? { ...s, status: 'error' } : s));
     }
   };
 
@@ -565,7 +564,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
     }
   };
 
-  const currentStep = steps.find(s => s.step_id === selectedStepId);
+  const currentStep = steps.find((s: OperationStep) => s.step_id === selectedStepId);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans flex flex-col">
@@ -614,7 +613,7 @@ export default function VideoCaptureTool({ initialSteps = [] }: { initialSteps?:
             <span className="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">{steps.length}</span>
           </div>
           <div className="flex-1 overflow-y-auto p-2 space-y-2">
-            {steps.map((step) => (
+            {steps.map((step: OperationStep) => (
               <div key={step.step_id} className={`group relative rounded-xl border transition-all duration-200 ${selectedStepId === step.step_id ? 'bg-blue-50 border-blue-200 shadow-sm ring-1 ring-blue-200' : 'bg-white border-gray-100 hover:bg-gray-50 hover:border-gray-200'}`}>
                 <button
                   onClick={() => selectStep(step.step_id)}

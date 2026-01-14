@@ -9,4 +9,23 @@ tasks:
     cmds:
       - git config --local commit.template .commit-template
       - pipx install pre-commit
-      # - pre-commit install
+      - pre-commit install
+
+  # =============================================================================
+  # ビルド — ターゲットGemのビルドとCDN用のcanvas.txtの生成
+  # =============================================================================
+  build:gems:
+    desc: Build target gem and generate CDN canvas.txt
+    dir: dev
+    cmds:
+      - npm run build:gems
+
+  # =============================================================================
+  # lint — コードの整形とチェック
+  # =============================================================================
+  lint:
+    desc: Lint code
+    dir: dev
+    cmds:
+      - npm run lint
+  

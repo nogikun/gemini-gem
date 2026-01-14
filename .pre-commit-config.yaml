@@ -1,0 +1,16 @@
+repos:
+  - repo: local
+    hooks:
+      - id: lint
+        name: Lint code
+        entry: task lint
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: build-gems
+        name: Build gems
+        entry: task build:gems
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
