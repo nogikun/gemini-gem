@@ -27,8 +27,7 @@ gems.forEach(gem => {
     const canvasPath = path.join(gemsDir, gem, 'canvas.tsx');
     if (fs.existsSync(canvasPath)) {
       let content = fs.readFileSync(canvasPath, 'utf-8');
-      const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
-      const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gem}/dist/index.umd.js?v=${dateStr}`;
+      const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gem}/dist/index.umd.js`;
 
       const replacement = `import React from 'react';
 import { OperationStep } from './app';
