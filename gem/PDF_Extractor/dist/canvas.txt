@@ -1,0 +1,23 @@
+import React from 'react';
+import React from 'react';
+import { OperationStep } from './app';
+
+// CDN Import with Cache Bursting
+const cdnUrl = "https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/PDF_Extractor/dist/index.umd.js?v=20260114";
+
+const App = React.lazy(async () => {
+  // Check Globals before import (Debug)
+  console.log("Globals Check:", { 
+    React: !!window.React, 
+    ReactDOM: !!window.ReactDOM,
+    antd: !!window.antd 
+  });
+
+  await import(cdnUrl);
+  // @ts-ignore
+  return { default: window.PDF_Extractor };
+});
+
+export default function Canvas() {
+  return <App />
+}
