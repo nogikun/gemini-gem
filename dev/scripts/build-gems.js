@@ -22,6 +22,30 @@ gems.forEach(gem => {
       env: { ...process.env, GEM_NAME: gem },
       cwd: path.resolve(__dirname, '..')
     });
+
+    // Generate dist/canvas.txt for CDN usage reference
+    const canvasPath = path.join(gemsDir, gem, 'canvas.tsx');
+    if (fs.existsSync(canvasPath)) {
+      let content = fs.readFileSync(canvasPath, 'utf-8');
+      const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gem}/dist/index.umd.js`;
+
+      const replacement = `import React from 'react';
+import { OperationStep } from './app';
+
+const cdnUrl = "${cdnUrl}";
+const App = React.lazy(async () => {
+  await import(cdnUrl);
+  // @ts-ignore
+  return { default: window.${gem} };
+});`;
+
+      // Replace local import with CDN import pattern
+      content = content.replace(/import\s+App.*from\s+['"]\.\/app['"];?/, replacement);
+
+      const distDir = path.join(gemsDir, gem, 'dist');
+      if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true });
+      fs.writeFileSync(path.join(distDir, 'canvas.txt'), content);
+    }
   } catch (e) {
     console.error(`Failed to build ${gem}`, e);
     process.exit(1);

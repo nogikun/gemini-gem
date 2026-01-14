@@ -23,12 +23,23 @@ const routes = Object.keys(gemModules).map((path) => {
 function GemCard({ route }: { route: typeof routes[0] }) {
   const [copied, setCopied] = useState(false)
   const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${route.name}/dist/index.umd.js`
-  const importCode = `// Dynamic Import of UMD (Recommended for browsers)
+  const importCode = `// --- Option A: React (Vite/Next.js) ---
 const App = React.lazy(async () => {
   await import("${cdnUrl}");
   // @ts-ignore
   return { default: window.${route.name} };
 });
+
+// --- Option B: HTML / UMD (Browser) ---
+// 1. Load React & ReactDOM (Required)
+// <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+// <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+//
+// 2. Load Gem
+// <script src="${cdnUrl}"></script>
+//
+// 3. Use Global
+// const App = window.${route.name};
 
 export default function Canvas() {
   return (
