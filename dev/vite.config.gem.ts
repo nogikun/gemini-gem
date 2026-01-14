@@ -25,12 +25,11 @@ export default defineConfig({
             formats: ['es', 'umd']
         },
         rollupOptions: {
-            external: ['react', 'react-dom', 'lucide-react'],
+            external: ['react', 'react-dom'],
             output: {
                 globals: {
                     react: 'React',
-                    'react-dom': 'ReactDOM',
-                    'lucide-react': 'Lucide'
+                    'react-dom': 'ReactDOM'
                 }
             }
         }
