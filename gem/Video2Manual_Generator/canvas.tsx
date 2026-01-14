@@ -1,4 +1,5 @@
-import App, { OperationStep } from './app'
+import React from 'react';
+import App, { OperationStep } from './app';
 
 const DEFAULT_STEPS: OperationStep[] = [
   {
