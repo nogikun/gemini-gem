@@ -1,0 +1,12 @@
+version: '3'
+
+tasks:
+  # =============================================================================
+  # 初期化 — 依存ツールのインストールと環境変数ファイルのセットアップ
+  # =============================================================================
+  init:
+    desc: Install pre-commit globally and set up git hooks
+    cmds:
+      - git config --local commit.template .commit-template
+      - pipx install pre-commit
+      # - pre-commit install
