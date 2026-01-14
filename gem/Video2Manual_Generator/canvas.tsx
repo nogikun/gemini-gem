@@ -1,5 +1,22 @@
 import React from 'react';
-import App, { OperationStep } from './app';
+import { OperationStep } from './app';
+
+const gemName = 'Video2Manual_Generator';
+const version = new Date().toISOString().split('T')[0].replace(/-/g, '');
+const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gemName}/dist/index.umd.js?v=${version}`;
+
+const App = React.lazy(async () => {
+  console.log(`[${gemName}] Loading from ${cdnUrl}`);
+  console.log(`[${gemName}] Globals:`, { 
+    React: !!window.React, 
+    ReactDOM: !!window.ReactDOM, 
+    antd: !!(window as any).antd 
+  });
+
+  await import(cdnUrl);
+  // @ts-ignore
+  return { default: (window as any)[gemName] };
+});
 
 const DEFAULT_STEPS: OperationStep[] = [
   {

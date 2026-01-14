@@ -22,18 +22,24 @@ const routes = Object.keys(gemModules).map((path) => {
 
 function GemCard({ route }: { route: typeof routes[0] }) {
   const [copied, setCopied] = useState(false)
-  const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${route.name}/dist/index.umd.js`
+  const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${route.name}/dist/index.umd.js?v=${new Date().toISOString().split('T')[0].replace(/-/g, '')}`
   const importCode = `// --- Option A: React (Vite/Next.js) ---
 const App = React.lazy(async () => {
+  // Debug: Check Globals
+  console.log("Globals:", { React: !!window.React, ReactDOM: !!window.ReactDOM, antd: !!window.antd });
+
   await import("${cdnUrl}");
   // @ts-ignore
   return { default: window.${route.name} };
 });
 
 // --- Option B: HTML / UMD (Browser) ---
-// 1. Load React & ReactDOM (Required)
-// <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-// <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+// 1. Dependencies (Order: Style -> React -> Dayjs -> AntD)
+// <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/antd@5.22.2/dist/reset.css">
+// <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+// <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/antd@5.22.2/dist/antd.min.js"></script>
 //
 // 2. Load Gem
 // <script src="${cdnUrl}"></script>

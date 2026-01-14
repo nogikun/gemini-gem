@@ -27,13 +27,23 @@ gems.forEach(gem => {
     const canvasPath = path.join(gemsDir, gem, 'canvas.tsx');
     if (fs.existsSync(canvasPath)) {
       let content = fs.readFileSync(canvasPath, 'utf-8');
-      const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gem}/dist/index.umd.js`;
+      const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${gem}/dist/index.umd.js?v=${dateStr}`;
 
       const replacement = `import React from 'react';
 import { OperationStep } from './app';
 
+// CDN Import with Cache Bursting
 const cdnUrl = "${cdnUrl}";
+
 const App = React.lazy(async () => {
+  // Check Globals before import (Debug)
+  console.log("Globals Check:", { 
+    React: !!window.React, 
+    ReactDOM: !!window.ReactDOM,
+    antd: !!window.antd 
+  });
+
   await import(cdnUrl);
   // @ts-ignore
   return { default: window.${gem} };
