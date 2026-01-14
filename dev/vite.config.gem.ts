@@ -15,6 +15,12 @@ export default defineConfig({
     define: {
         'process.env.NODE_ENV': JSON.stringify('production')
     },
+    resolve: {
+        alias: {
+            '@gem': resolve(__dirname, '../gem'),
+            'lucide-react': resolve(__dirname, 'node_modules/lucide-react')
+        }
+    },
     build: {
         outDir: resolve(__dirname, `../gem/${gemName}/dist`),
         emptyOutDir: true,
@@ -34,9 +40,5 @@ export default defineConfig({
             }
         }
     },
-    resolve: {
-        alias: {
-            '@gem': resolve(__dirname, '../gem')
-        }
-    }
+
 })
