@@ -7,7 +7,9 @@
         "dev": "vite",
         "build": "tsc -b && vite build",
         "lint": "eslint .",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "build:gem": "vite build -c vite.config.gem.ts",
+        "build:gems": "node scripts/build-gems.js"
     },
     "dependencies": {
         "lucide-react": "^0.468.0",
