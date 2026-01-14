@@ -18,8 +18,8 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, `../gem/${gemName}/app.tsx`),
             name: gemName,
-            fileName: (format) => `index.js`, // Force .js extension for ES format
-            formats: ['es']
+            fileName: (format) => format === 'es' ? 'index.js' : `index.${format}.js`,
+            formats: ['es', 'umd']
         },
         rollupOptions: {
             external: ['react', 'react-dom', 'lucide-react'],

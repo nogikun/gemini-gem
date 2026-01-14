@@ -22,8 +22,18 @@ const routes = Object.keys(gemModules).map((path) => {
 
 function GemCard({ route }: { route: typeof routes[0] }) {
   const [copied, setCopied] = useState(false)
-  const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${route.name}/dist/index.js`
-  const importCode = `import App from "${cdnUrl}";`
+  const cdnUrl = `https://cdn.jsdelivr.net/gh/nogikun/gemini-gem@main/gem/${route.name}/dist/index.umd.js`
+  const importCode = `// Dynamic Import (Recommended for external URLs)
+// Replace "import App from './app'" with:
+const App = React.lazy(() => import("${cdnUrl}"));
+
+export default function Canvas() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <App initialSteps={DEFAULT_STEPS} />
+    </React.Suspense>
+  );
+}`
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
