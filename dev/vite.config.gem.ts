@@ -11,7 +11,10 @@ if (!gemName) {
 }
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [react({ jsxRuntime: 'classic' })],
+    define: {
+        'process.env.NODE_ENV': JSON.stringify('production')
+    },
     build: {
         outDir: resolve(__dirname, `../gem/${gemName}/dist`),
         emptyOutDir: true,
